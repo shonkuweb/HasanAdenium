@@ -1,4 +1,5 @@
-mitalinursury.com, www.mitalinursury.com, bpn.shonkuweb.com {
+mitalinursury.com, www.mitalinursury.com, malatinursury.shonkuweb.com {
     reverse_proxy web:3000
 }
+
 
