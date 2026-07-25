@@ -122,15 +122,15 @@ export default function Home() {
           <section className="hero" style={{ ...heroStyle }}>
             <div className="hero-overlay">
               <span className="badge">NEW ARRIVALS</span>
-              <h2>Over 300 varities of plants in stock.</h2>
-              <p>20 years experience , Most popular nursury in Panskura</p>
+              <h1 style={{ fontSize: '22px', fontWeight: 'bold', margin: '8px 0', lineHeight: '1.3' }}>Mitali Nursery - Wholesale & Retail Plant Nursery</h1>
+              <p>20 years experience · Over 300+ live nursery plant varieties in Panskura, West Bengal</p>
               <a href="tel:+917427941760" className="cta-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>Call me</a>
             </div>
           </section>
 
           <div className="notice">
             <p className="notice-track">
-              Location. West Bengal /Panskura/721152 &nbsp;&nbsp;|&nbsp;&nbsp; Mobile: +917427941760 , +917978243235
+              Location: West Bengal / Panskura / 721152 &nbsp;&nbsp;|&nbsp;&nbsp; Mobile: +917427941760 , +917978243235
             </p>
           </div>
 
@@ -168,8 +168,7 @@ export default function Home() {
 
       <section className="best-sellers">
         <div className="section-title">
-
-
+          <h2 style={{ fontSize: '18px', color: '#1f6b2c', margin: '16px 0 8px 0' }}>Popular Nursery Plants</h2>
         </div>
 
         <div className="product-grid">
@@ -189,7 +188,7 @@ export default function Home() {
               <article key={product.id || product.slug} className="product-card">
                 <span className="offer-pill">{product.offer}</span>
                 <Link href={`/product/${product.slug}?mode=${priceMode}`} className="product-image-link" style={{ display: 'block', overflow: 'hidden' }}>
-                  <img src={product.image} alt={product.title} loading="lazy" decoding="async" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                  <img src={product.image} alt={`Mitali Nursery Plant - ${product.title}`} loading="lazy" decoding="async" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
                 </Link>
                 <div className="product-info">
                   <p className="product-title">{product.title}</p>
@@ -215,6 +214,24 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      <section className="seo-content-section" style={{ padding: '20px 16px', background: '#f4f8f4', margin: '24px 12px 12px 12px', borderRadius: '12px', border: '1px solid #d8e6d8' }}>
+        <h2 style={{ fontSize: '16px', color: '#1f6b2c', marginBottom: '8px', fontWeight: 'bold' }}>Mitali Nursery - Premier Wholesale & Retail Live Plant Supplier</h2>
+        <p style={{ fontSize: '13px', color: '#444', lineHeight: '1.6', marginBottom: '12px' }}>
+          Welcome to <strong>Mitali Nursery</strong> (also known as <em>Malati Nursery</em>), your trusted online plant nursery and wholesale plant supplier based in Panskura, Purba Medinipur, West Bengal (721152). We specialize in high-quality live nursery plants for garden lovers, landscape contractors, and wholesale plant buyers across India.
+        </p>
+        <h3 style={{ fontSize: '14px', color: '#222', marginBottom: '6px', fontWeight: 'bold' }}>Our Wholesale & Retail Plant Offerings:</h3>
+        <ul style={{ fontSize: '12px', color: '#555', paddingLeft: '18px', lineHeight: '1.6', marginBottom: '12px' }}>
+          <li><strong>300+ Live Plant Varieties:</strong> Premium Adenium plants, grafted fruit trees, flowering shrubs, indoor air-purifying plants, and rare bonsai.</li>
+          <li><strong>Direct Wholesale Rates:</strong> Special bulk pricing for reseller nurseries, garden centers, and landscape projects.</li>
+          <li><strong>20+ Years Horticulture Experience:</strong> Healthy, well-rooted nursery plants carefully grown for high survival rate.</li>
+          <li><strong>Pan-India Shipping:</strong> Secure protective live plant packaging for safe delivery across all Indian states.</li>
+        </ul>
+        <p style={{ fontSize: '12px', color: '#444', lineHeight: '1.5' }}>
+          For wholesale bulk enquiries or custom orders, call us directly at <strong>+91 7427941760</strong> or <strong>+91 7978243235</strong>.
+        </p>
+      </section>
+
 
       {menuOpen && <button className="menu-overlay" aria-label="Close menu overlay" onClick={() => setMenuOpen(false)} />}
       <aside className={`side-menu ${menuOpen ? "open" : ""}`} aria-label="Website menu">
