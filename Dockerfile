@@ -55,8 +55,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/dev.db ./dev.db
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Add startup script
-COPY --chown=nextjs:nodejs start.sh ./
-# RUN chmod +x start.sh
+COPY start.sh ./
+RUN chmod +x start.sh
 
 EXPOSE 3000
 
