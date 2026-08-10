@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FiUpload, FiTrash2, FiPlus, FiTag, FiEdit2 } from "react-icons/fi";
+import { FiUpload, FiTrash2, FiPlus, FiTag, FiEdit2, FiSearch, FiX, FiPackage, FiLayers, FiImage, FiCheckCircle } from "react-icons/fi";
 import Link from "next/link";
 import imageCompression from 'browser-image-compression';
 
@@ -9,6 +9,15 @@ export default function AdminPage() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Mobile active tab state ('inventory' | 'form')
+  const [mobileTab, setMobileTab] = useState('inventory');
+  
+  // Search filter state
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Image preview state
+  const [imagePreview, setImagePreview] = useState('');
   
   // Edit mode state
   const [editingProductId, setEditingProductId] = useState(null);
@@ -21,7 +30,12 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [type, setType] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   
+  // Category management state
+  const [newCatName, setNewCatName] = useState("");
+  const [isAddingCat, setIsAddingCat] = useState(false);
+
   // Adenium options state
   const [adeniumPrice8, setAdeniumPrice8] = useState("");
   const [adeniumPrice10, setAdeniumPrice10] = useState("");
@@ -30,6 +44,18 @@ export default function AdminPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (existingImage) {
+      setImagePreview(existingImage);
+    } else {
+      setImagePreview("");
+    }
+  }, [file, existingImage]);
 
   const fetchData = async () => {
     try {
@@ -66,6 +92,7 @@ export default function AdminPage() {
     setDescription(product.description || "");
     setExistingImage(product.image);
     setType(product.type || "");
+    setCategoryId(product.categoryId || product.category?.id || "");
     setFile(null);
 
     if (product.adeniumOptions) {
@@ -78,6 +105,7 @@ export default function AdminPage() {
       setAdeniumPriceSingle("");
     }
     
+    setMobileTab('form');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -89,10 +117,48 @@ export default function AdminPage() {
     setDescription("");
     setExistingImage("");
     setFile(null);
+    setImagePreview("");
     setType("");
+    setCategoryId("");
     setAdeniumPrice8("");
     setAdeniumPrice10("");
     setAdeniumPriceSingle("");
+  };
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatName.trim()) return;
+    setIsAddingCat(true);
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCatName.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to add category");
+      }
+      setNewCatName("");
+      fetchData();
+      alert("Category added successfully!");
+    } catch (err) {
+      alert("Error adding category: " + err.message);
+    } finally {
+      setIsAddingCat(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id, name) => {
+    if (!confirm(`Are you sure you want to delete category "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/categories?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete category");
+      fetchData();
+      alert("Category deleted successfully!");
+    } catch (err) {
+      alert("Error deleting category: " + err.message);
+    }
   };
 
   const handleSubmitProduct = async (e) => {
@@ -154,7 +220,8 @@ export default function AdminPage() {
         type,
         rating: 5.0,
         reviews: 120,
-        adeniumOptions
+        adeniumOptions,
+        categoryId: categoryId || null
       };
 
       let res;
@@ -181,7 +248,10 @@ export default function AdminPage() {
       // 3. Reset form
       handleCancelEdit();
       
-      // 4. Refresh list
+      // 4. Switch back to inventory tab on mobile after save
+      setMobileTab('inventory');
+
+      // 5. Refresh list
       fetchData();
       alert(`Product ${editingProductId ? 'updated' : 'added'} successfully!`);
 
@@ -199,14 +269,48 @@ export default function AdminPage() {
     setSlug(newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
   };
 
+  // Filter products by search query
+  const filteredProducts = products.filter(p => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (p.title && p.title.toLowerCase().includes(q)) ||
+      (p.type && p.type.toLowerCase().includes(q)) ||
+      (p.category_name && p.category_name.toLowerCase().includes(q)) ||
+      (p.price && p.price.toString().includes(q))
+    );
+  });
+
+  const adeniumCount = products.filter(p => p.title.toLowerCase().includes('adenium')).length;
+
   return (
     <div className="admin-container" style={{ padding: 0 }}>
+      {/* Mobile View Switcher */}
+      <div className="admin-mobile-nav">
+        <button 
+          className={`admin-mobile-nav-btn ${mobileTab === 'inventory' ? 'active' : ''}`}
+          onClick={() => setMobileTab('inventory')}
+        >
+          <FiPackage /> Inventory ({products.length})
+        </button>
+        <button 
+          className={`admin-mobile-nav-btn ${mobileTab === 'form' ? 'active' : ''}`}
+          onClick={() => setMobileTab('form')}
+        >
+          {editingProductId ? <><FiEdit2 /> Edit Item</> : <><FiPlus /> Add Item</>}
+        </button>
+      </div>
+
       <main className="admin-main" style={{ margin: 0 }}>
         <div className="admin-content-grid">
           
-          <div className="admin-left-col">
+          {/* Add / Edit Product Column */}
+          <div className={`admin-left-col ${mobileTab !== 'form' ? 'mobile-tab-hidden' : ''}`}>
             <section className="admin-card add-product-section">
-              <h2><FiPlus /> {editingProductId ? "Edit Product" : "Add New Product"}</h2>
+              <h2>
+                <span className="admin-card-icon">{editingProductId ? <FiEdit2 /> : <FiPlus />}</span>
+                {editingProductId ? "Edit Product" : "Add New Product"}
+              </h2>
               <form onSubmit={handleSubmitProduct} className="admin-form">
                 <div className="form-group">
                   <label>Product Title</label>
@@ -233,19 +337,32 @@ export default function AdminPage() {
                   </select>
                 </div>
 
+                <div className="form-group">
+                  <label>Category (Optional)</label>
+                  <select 
+                    value={categoryId} 
+                    onChange={(e) => setCategoryId(e.target.value)}
+                  >
+                    <option value="">Select a Category</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
                 {title.toLowerCase().includes('adenium') && (
-                  <div className="form-group" style={{background: '#f9f9f9', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
-                    <h3 style={{marginBottom: '12px', fontSize: '16px', color: '#187a32'}}>Adenium Prices (Leave empty if not applicable)</h3>
-                    <div style={{display: 'flex', gap: '12px', flexDirection: 'column'}}>
-                      <div>
+                  <div className="admin-adenium-box">
+                    <h3>Adenium Special Options</h3>
+                    <div className="admin-adenium-fields">
+                      <div className="form-group">
                         <label>Multigrafted 8" Pot (₹)</label>
                         <input type="number" value={adeniumPrice8} onChange={e => setAdeniumPrice8(e.target.value)} placeholder="e.g. 500" />
                       </div>
-                      <div>
+                      <div className="form-group">
                         <label>Multigrafted 10" Pot (₹)</label>
                         <input type="number" value={adeniumPrice10} onChange={e => setAdeniumPrice10(e.target.value)} placeholder="e.g. 800" />
                       </div>
-                      <div>
+                      <div className="form-group">
                         <label>Single Grafted (₹)</label>
                         <input type="number" value={adeniumPriceSingle} onChange={e => setAdeniumPriceSingle(e.target.value)} placeholder="e.g. 300" />
                       </div>
@@ -276,6 +393,14 @@ export default function AdminPage() {
 
                 <div className="form-group">
                   <label>Product Image</label>
+                  {imagePreview && (
+                    <div className="admin-image-preview">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="preview-badge">
+                        <FiCheckCircle /> {file ? "New File Selected" : "Current Image"}
+                      </div>
+                    </div>
+                  )}
                   <div className="file-upload-wrapper">
                     <input 
                       type="file" 
@@ -290,52 +415,150 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div style={{display: 'flex', gap: '12px'}}>
-                  <button type="submit" className="admin-submit-btn" disabled={isUploading} style={{flex: 1}}>
+                <div className="admin-form-actions">
+                  <button type="submit" className="admin-submit-btn" disabled={isUploading}>
                     {isUploading ? "Saving..." : (editingProductId ? "Update Product" : "Save Product")}
                   </button>
                   {editingProductId && (
-                    <button type="button" onClick={handleCancelEdit} className="admin-cancel-btn" style={{flex: 1}}>
+                    <button type="button" onClick={handleCancelEdit} className="admin-cancel-btn">
                       Cancel Edit
                     </button>
                   )}
                 </div>
               </form>
             </section>
+
+            {/* Category Management Section */}
+            <section className="admin-card add-category-section" style={{ marginTop: '24px' }}>
+              <h2>
+                <span className="admin-card-icon"><FiTag /></span>
+                Manage Categories ({categories.length})
+              </h2>
+              <form onSubmit={handleAddCategory} className="admin-form" style={{ marginBottom: '16px' }}>
+                <div className="form-group">
+                  <label>Add New Custom Category</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      type="text" 
+                      value={newCatName} 
+                      onChange={(e) => setNewCatName(e.target.value)} 
+                      placeholder="e.g. Rare Succulents, Outdoor Palms..." 
+                      required 
+                    />
+                    <button type="submit" className="admin-submit-btn" disabled={isAddingCat} style={{ width: 'auto', whiteSpace: 'nowrap', padding: '0 16px' }}>
+                      {isAddingCat ? "Adding..." : "+ Add Category"}
+                    </button>
+                  </div>
+                </div>
+              </form>
+              
+              <div className="admin-category-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '240px', overflowY: 'auto' }}>
+                {categories.map((cat) => (
+                  <div key={cat.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8faf8', border: '1px solid #e2e8e2', borderRadius: '8px' }}>
+                    <div>
+                      <strong style={{ fontSize: '14px', color: '#1a1a1a' }}>{cat.name}</strong>
+                      <span style={{ fontSize: '12px', color: '#64748b', marginLeft: '10px' }}>
+                        ({cat._count?.products || 0} products)
+                      </span>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => handleDeleteCategory(cat.id, cat.name)} 
+                      className="admin-action-btn admin-delete-action"
+                      title="Delete Category"
+                      aria-label="Delete Category"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
 
-          <section className="admin-card product-list-section">
-            <h2>Manage Inventory</h2>
+          {/* Manage Inventory Column */}
+          <section className={`admin-card product-list-section ${mobileTab !== 'inventory' ? 'mobile-tab-hidden' : ''}`}>
+            <div className="admin-card-header-flex">
+              <h2>
+                <span className="admin-card-icon"><FiPackage /></span>
+                Manage Inventory
+              </h2>
+            </div>
+
+            {/* Overview Stats */}
+            <div className="admin-stats-summary">
+              <div className="stat-badge">
+                <FiPackage className="stat-icon" />
+                <span><strong>{products.length}</strong> Total Items</span>
+              </div>
+              <div className="stat-badge stat-adenium">
+                <FiLayers className="stat-icon" />
+                <span><strong>{adeniumCount}</strong> Adeniums</span>
+              </div>
+            </div>
+
+            {/* Live Search Input */}
+            <div className="admin-search-box">
+              <FiSearch className="search-icon" />
+              <input 
+                type="text" 
+                placeholder="Search products by title, type, category..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="admin-search-input"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="search-clear-btn" aria-label="Clear search">
+                  <FiX />
+                </button>
+              )}
+            </div>
+
             {isLoading ? (
               <p className="admin-loading">Loading products...</p>
-            ) : products.length === 0 ? (
-              <p className="admin-empty">No products found. Add some to get started!</p>
+            ) : filteredProducts.length === 0 ? (
+              <div className="admin-empty">
+                <p>{searchQuery ? `No products match "${searchQuery}"` : "No products found. Add some to get started!"}</p>
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="admin-btn-secondary" style={{marginTop: '8px', padding: '8px 16px'}}>
+                    Clear Search
+                  </button>
+                )}
+              </div>
             ) : (
               <div className="admin-product-list">
-                {products.map(product => (
+                {filteredProducts.map(product => (
                   <div key={product.id || product.slug} className="admin-product-item">
                     <div className="admin-product-image">
                       <img src={product.image} alt={product.title} />
                     </div>
                     <div className="admin-product-details">
                       <h3>{product.title}</h3>
-                      <p>₹{product.price} {product.type && <span>({product.type})</span>}</p>
-                      {product.category_name && <span style={{fontSize: '12px', background: '#eaf4ee', color: '#187a32', padding: '2px 8px', borderRadius: '12px', display: 'inline-block', marginTop: '4px'}}>{product.category_name}</span>}
+                      <div className="admin-product-meta">
+                        <span className="product-price">₹{product.price}</span>
+                        {product.type && <span className="product-type-badge">{product.type}</span>}
+                      </div>
+                      {product.category?.name && (
+                        <span className="product-cat-badge">
+                          <FiTag style={{ marginRight: '4px' }} />
+                          {product.category.name}
+                        </span>
+                      )}
                     </div>
-                    <div style={{display: 'flex', gap: '12px'}}>
+                    <div className="admin-item-actions">
                       <button 
                         onClick={() => handleEditProduct(product)} 
-                        className="admin-edit-btn"
+                        className="admin-action-btn admin-edit-action"
                         title="Edit Product"
-                        style={{background: 'none', border: 'none', color: '#1890ff', cursor: 'pointer', fontSize: '20px'}}
+                        aria-label="Edit Product"
                       >
                         <FiEdit2 />
                       </button>
                       <button 
                         onClick={() => handleDeleteProduct(product.slug)} 
-                        className="admin-delete-btn"
+                        className="admin-action-btn admin-delete-action"
                         title="Delete Product"
-                        style={{background: 'none', border: 'none', color: '#ff4d4f', cursor: 'pointer', fontSize: '20px'}}
+                        aria-label="Delete Product"
                       >
                         <FiTrash2 />
                       </button>

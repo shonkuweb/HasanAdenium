@@ -1,17 +1,13 @@
 import AdminHeader from './components/AdminHeader';
 
 export const metadata = {
-  title: 'Malati Nursery Admin',
+  title: 'Hasan Adenium Admin',
 };
 
 export default function AdminLayout({ children }) {
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      fontFamily: '"Inter", system-ui, sans-serif',
-      backgroundColor: '#f8faf9' 
-    }}>
-      <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
+    <div className="admin-container">
+      <div className="admin-layout-container">
         <AdminHeader />
         {children}
       </div>

@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { FiX, FiMinus, FiPlus, FiTrash2, FiShoppingBag, FiArrowRight } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
+import MinOrderPopup from "./MinOrderPopup";
 
 export default function CartSidebar() {
-  const { items: cartItems, updateQty, removeItem, isSidebarOpen, setIsSidebarOpen } = useCart();
+  const [showMinModal, setShowMinModal] = useState(false);
+  const { items: cartItems, addItem, updateQty, removeItem, products, isSidebarOpen, setIsSidebarOpen, minOrderQty } = useCart();
 
   const toAmount = (value) => {
     const match = String(value).replace(/,/g, "").match(/\d+(?:\.\d+)?/);
@@ -82,13 +85,43 @@ export default function CartSidebar() {
               <span>Subtotal</span>
               <strong>Rs. {subtotal.toFixed(2)}</strong>
             </div>
-            <p className="tax-shipping-note">Taxes and shipping calculated at checkout.</p>
-            <Link href="/checkout" className="btn-modern-primary full-width mt-4" onClick={() => setIsSidebarOpen(false)}>
+            {itemCount < (minOrderQty || 5) ? (
+              <div style={{ background: '#fff3cd', color: '#856404', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', marginTop: '12px', border: '1px solid #ffeeba', fontWeight: '600', textAlign: 'center' }}>
+                ⚠️ Minimum order quantity is {minOrderQty || 5} items. Add {(minOrderQty || 5) - itemCount} more item(s) to proceed.
+              </div>
+            ) : (
+              <p className="tax-shipping-note">Taxes and shipping calculated at checkout.</p>
+            )}
+            <Link
+              href="/checkout"
+              className="btn-modern-primary full-width mt-4"
+              onClick={(e) => {
+                if (itemCount < (minOrderQty || 5)) {
+                  e.preventDefault();
+                  setShowMinModal(true);
+                  return;
+                }
+                setIsSidebarOpen(false);
+              }}
+            >
               Proceed to Checkout <FiArrowRight />
             </Link>
           </div>
         )}
       </aside>
+
+      <MinOrderPopup
+        isOpen={showMinModal}
+        onClose={() => setShowMinModal(false)}
+        currentQty={itemCount}
+        minQty={minOrderQty || 5}
+        products={products}
+        onAddItem={(slug, qty) => addItem(slug, qty)}
+        onProceed={() => {
+          setShowMinModal(false);
+          setIsSidebarOpen(false);
+        }}
+      />
     </>
   );
 }

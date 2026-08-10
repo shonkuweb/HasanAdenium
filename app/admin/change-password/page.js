@@ -57,27 +57,18 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '40px auto', background: '#fff', padding: '32px', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-      <h2 style={{ margin: '0 0 24px 0', color: '#1a1a1a', fontSize: '1.5rem' }}>Change Password</h2>
+    <div className="admin-card admin-password-card">
+      <h2>Change Password</h2>
       
       {message.text && (
-        <div style={{ 
-          background: message.type === 'error' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(52, 199, 89, 0.1)', 
-          color: message.type === 'error' ? '#ff3b30' : '#34c759', 
-          padding: '12px 16px', 
-          borderRadius: '12px', 
-          marginBottom: '24px', 
-          fontSize: '0.95rem',
-          fontWeight: '500',
-          border: `1px solid ${message.type === 'error' ? 'rgba(255, 59, 48, 0.2)' : 'rgba(52, 199, 89, 0.2)'}`
-        }}>
+        <div className={`admin-alert ${message.type === 'error' ? 'alert-error' : 'alert-success'}`}>
           {message.text}
         </div>
       )}
       
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: '600', fontSize: '0.95rem' }}>
+      <form onSubmit={handleSubmit} className="admin-form">
+        <div className="form-group">
+          <label>
             Current Password
           </label>
           <input
@@ -85,14 +76,12 @@ export default function ChangePasswordPage() {
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
-            style={{
-              width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', boxSizing: 'border-box', outline: 'none'
-            }}
+            placeholder="Enter current password"
           />
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: '600', fontSize: '0.95rem' }}>
+        <div className="form-group">
+          <label>
             New Password
           </label>
           <input
@@ -100,14 +89,12 @@ export default function ChangePasswordPage() {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
-            style={{
-              width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', boxSizing: 'border-box', outline: 'none'
-            }}
+            placeholder="Enter new password (min 6 chars)"
           />
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: '600', fontSize: '0.95rem' }}>
+        <div className="form-group">
+          <label>
             Confirm New Password
           </label>
           <input
@@ -115,28 +102,22 @@ export default function ChangePasswordPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            style={{
-              width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', boxSizing: 'border-box', outline: 'none'
-            }}
+            placeholder="Confirm new password"
           />
         </div>
         
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="admin-form-actions">
           <button
             type="submit"
             disabled={loading}
-            style={{
-              flex: 1, padding: '12px', background: loading ? '#2c8f3e' : '#1f6b2c', color: 'white', border: 'none', borderRadius: '8px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: '600', transition: 'all 0.2s ease'
-            }}
+            className="admin-submit-btn"
           >
             {loading ? 'Updating...' : 'Change Password'}
           </button>
           <button
             type="button"
             onClick={() => router.push('/admin')}
-            style={{
-              flex: 1, padding: '12px', background: '#f5f5f5', color: '#333', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', transition: 'all 0.2s ease'
-            }}
+            className="admin-cancel-btn"
           >
             Cancel
           </button>

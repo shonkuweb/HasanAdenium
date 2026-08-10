@@ -2,49 +2,46 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata = {
-  metadataBase: new URL("https://mitalinursury.com"),
+  metadataBase: new URL("https://hasanadenium.com"),
   title: {
-    default: "Mitali Nursery - Wholesale & Retail Plant Nursery in Panskura, West Bengal | Buy Live Plants Online",
-    template: "%s | Mitali Nursery"
+    default: "Hasan Adenium - Wholesale & Retail Plant Nursery | Buy Live Adenium Plants Online",
+    template: "%s | Hasan Adenium"
   },
-  description: "Mitali Nursery (Malati Nursery) is a leading wholesale and retail plant nursery in Panskura, West Bengal offering 300+ live plant varieties including Adenium, Bonsai, Fruit Plants & Garden Plants. Fast bulk shipping across India.",
+  description: "Hasan Adenium is a leading wholesale and retail plant nursery offering premium live Adenium plants, Bonsai & Garden Plants with fast shipping across India.",
   keywords: [
-    "mitalinursury.com",
-    "mitalinursery.com",
-    "Mitali Nursery",
-    "Mitali Nursury",
-    "Malati Nursery",
-    "Malati Nursury",
+    "hasanadenium.com",
+    "hasanadenium",
+    "Hasan Adenium",
+    "Hasan Adenium Nursery",
     "nursery plant",
     "wholesale nursery",
     "wholesale plant supplier",
     "online plant nursery",
     "buy live plants online",
     "wholesale adenium nursery",
+    "grafted adenium plants",
+    "multigrafted adenium",
     "bulk plants online India",
     "Panskura plant nursery",
-    "plant nursery West Bengal",
-    "cheap nursery plants",
-    "garden plants wholesale",
-    "fruit plants nursery Panskura"
+    "plant nursery West Bengal"
   ],
-  authors: [{ name: "Mitali Nursery", url: "https://mitalinursury.com" }],
-  creator: "Mitali Nursery",
-  publisher: "Mitali Nursery",
+  authors: [{ name: "Hasan Adenium", url: "https://hasanadenium.com" }],
+  creator: "Hasan Adenium",
+  publisher: "Hasan Adenium",
   alternates: {
-    canonical: "https://mitalinursury.com"
+    canonical: "https://hasanadenium.com"
   },
   openGraph: {
-    title: "Mitali Nursery - #1 Wholesale & Retail Plant Nursery in Panskura",
-    description: "Buy live nursery plants online at wholesale and retail prices. 300+ plant varieties including Adenium, Grafted Plants & Fruit Trees with delivery across India.",
-    url: "https://mitalinursury.com",
-    siteName: "Mitali Nursery",
+    title: "Hasan Adenium - Wholesale & Retail Adenium Nursery",
+    description: "Buy live adenium nursery plants online at wholesale and retail prices with delivery across India.",
+    url: "https://hasanadenium.com",
+    siteName: "Hasan Adenium",
     images: [
       {
-        url: "https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png",
+        url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "Mitali Nursery Logo - Live Plant Nursery Panskura"
+        alt: "Hasan Adenium Logo"
       }
     ],
     locale: "en_IN",
@@ -52,9 +49,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mitali Nursery - Wholesale & Retail Live Plant Nursery",
-    description: "Buy 300+ varieties of live nursery plants online at wholesale prices. Fast delivery across India.",
-    images: ["https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png"]
+    title: "Hasan Adenium - Wholesale & Retail Live Plant Nursery",
+    description: "Buy premium live Adenium nursery plants online at wholesale prices.",
+    images: ["/logo.png"]
   },
   robots: {
     index: true,
@@ -74,14 +71,14 @@ const jsonLdSchema = {
   "@graph": [
     {
       "@type": "GardenStore",
-      "@id": "https://mitalinursury.com/#store",
-      "name": "Mitali Nursery",
-      "alternateName": ["Mitali Nursury", "Malati Nursery", "Malati Nursury", "Mitali Wholesale Nursery"],
-      "url": "https://mitalinursury.com",
-      "logo": "https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png",
-      "image": "https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png",
-      "description": "Mitali Nursery is a premier wholesale & retail live plant nursery in Panskura, West Bengal providing 300+ plant varieties including Adenium, Bonsai, Fruit Plants, and Garden Plants.",
-      "telephone": "+917427941760",
+      "@id": "https://hasanadenium.com/#store",
+      "name": "Hasan Adenium",
+      "alternateName": ["Hasan Adenium Nursery", "Hasan Adenium Wholesale"],
+      "url": "https://hasanadenium.com",
+      "logo": "https://hasanadenium.com/logo.png",
+      "image": "https://hasanadenium.com/logo.png",
+      "description": "Hasan Adenium is a premier wholesale & retail live plant nursery providing premium Adenium plants and garden plants.",
+      "telephone": "+919153117740",
       "priceRange": "₹",
       "address": {
         "@type": "PostalAddress",
@@ -107,11 +104,11 @@ const jsonLdSchema = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://mitalinursury.com/#website",
-      "url": "https://mitalinursury.com",
-      "name": "Mitali Nursery",
-      "alternateName": ["mitalinursury.com", "mitalinursery.com", "Mitali Nursury"],
-      "description": "Buy wholesale & retail nursery plants online from Mitali Nursery Panskura."
+      "@id": "https://hasanadenium.com/#website",
+      "url": "https://hasanadenium.com",
+      "name": "Hasan Adenium",
+      "alternateName": ["hasanadenium.com"],
+      "description": "Buy wholesale & retail Adenium plants online from Hasan Adenium."
     }
   ]
 };
@@ -126,11 +123,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <div className="desktop-blocker">
-          <div style={{ fontSize: '64px', marginBottom: '20px' }}>📱</div>
-          <h2>Please open this website on a mobile phone</h2>
-          <p style={{ marginTop: '20px', color: '#666' }}>Crafted by <strong>ShonkuWeb</strong></p>
-        </div>
         <div className="mobile-app-container">
           <Providers>{children}</Providers>
         </div>
@@ -138,4 +130,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

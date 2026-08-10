@@ -107,8 +107,8 @@ export default function ProductPage() {
         <button className="icon-btn" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
           <FiMenu />
         </button>
-        <Link href="/" className="header-center" aria-label="Malati Nursury home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png" alt="Malati Nursury Logo" style={{ height: '40px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+        <Link href="/" className="header-center" aria-label="Hasan Adenium home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+          <img src="/logo.png" alt="Hasan Adenium Logo" className="header-logo" style={{ height: '53px', width: 'auto', objectFit: 'contain', background: 'transparent' }} />
         </Link>
         <div className="header-actions">
           <Link href="/admin" className="icon-btn" aria-label="Admin Panel">
@@ -144,7 +144,7 @@ export default function ProductPage() {
       </section>
 
       <section className="product-detail-body">
-        <p className="brand-eyebrow">Malati Nursury · Best Seller</p>
+        <p className="brand-eyebrow">Hasan Adenium · {product.category?.name || "Best Seller"}</p>
         <h1>{product.title}</h1>
 
         {!isWholesale && (
@@ -315,7 +315,7 @@ export default function ProductPage() {
       <nav className="bottom-nav visible" aria-label="Primary navigation">
         {isWholesale ? (
           <div style={{ padding: '4px', width: '100%', gridColumn: '1 / -1' }}>
-            <a href="tel:+917427941760" className="add-btn" style={{ 
+            <a href="tel:+919153117740" className="add-btn" style={{ 
                 width: '100%', 
                 margin: 0, 
                 padding: '14px', 
@@ -351,7 +351,7 @@ export default function ProductPage() {
               </span>
               <span>Cart</span>
             </button>
-            <a href="https://wa.me/917427941760" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <a href="https://wa.me/919153117740" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
               <span className="bottom-icon" style={{ color: '#25D366' }}>
                 <FaWhatsapp />
               </span>

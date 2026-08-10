@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
+import MinOrderPopup from "../components/MinOrderPopup";
 import { categories as menuCategories } from "../data/categories";
 
 const FREE_DELIVERY_THRESHOLD = 4999;
@@ -28,10 +29,12 @@ const toAmount = (value) => {
 export default function CheckoutPage() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { items: cartItems, clear, setIsSidebarOpen } = useCart();
+  const [showMinOrderModal, setShowMinOrderModal] = useState(false);
+  const { items: cartItems, addItem, products, clear, setIsSidebarOpen, minOrderQty = 5 } = useCart();
   const [form, setForm] = useState({ name: "", phone: "", pincode: "", address: "" });
   const [selectedAdeniumOptions, setSelectedAdeniumOptions] = useState([]);
 
+  const totalItemCount = cartItems.reduce((sum, i) => sum + i.qty, 0);
   const hasAdenium = cartItems.some(item => item.title?.toLowerCase().includes('adenium') || item.slug?.toLowerCase().includes('adenium'));
 
   const ADENIUM_CHECKOUT_OPTIONS = [
@@ -56,6 +59,10 @@ export default function CheckoutPage() {
   const placeOrder = () => {
     if (cartItems.length === 0) {
       alert("Your cart is empty.");
+      return;
+    }
+    if (totalItemCount < minOrderQty) {
+      setShowMinOrderModal(true);
       return;
     }
     if (!form.name.trim() || !form.phone.trim() || !form.address.trim() || !form.pincode.trim()) {
@@ -107,7 +114,7 @@ export default function CheckoutPage() {
     }
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/917427941760?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/919153117740?text=${encodedMessage}`;
     
     // Open WhatsApp in new window
     window.open(whatsappUrl, '_blank');
@@ -290,13 +297,23 @@ export default function CheckoutPage() {
           </span>
           <span>Cart</span>
         </button>
-        <a href="https://wa.me/917427941760" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <a href="https://wa.me/919153117740" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
           <span className="bottom-icon" style={{ color: '#25D366' }}>
             <FaWhatsapp />
           </span>
           <span>WhatsApp</span>
         </a>
       </nav>
+
+      <MinOrderPopup
+        isOpen={showMinOrderModal}
+        onClose={() => setShowMinOrderModal(false)}
+        currentQty={totalItemCount}
+        minQty={minOrderQty}
+        products={products}
+        onAddItem={(slug, qty) => addItem(slug, qty)}
+        onProceed={() => setShowMinOrderModal(false)}
+      />
     </main>
   );
 }

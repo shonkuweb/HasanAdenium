@@ -19,6 +19,13 @@ import { GiFlowerPot, GiFlowerTwirl } from "react-icons/gi";
 import { categories as defaultCategories } from "./data/categories";
 import { useCart } from "./context/CartContext";
 
+const heroImages = [
+  "/hero/hero-1.jpg",
+  "/hero/hero-2.jpg",
+  "/hero/hero-3.jpg",
+  "/hero/hero-4.jpg"
+];
+
 export default function Home() {
 
   const [showBottomNav, setShowBottomNav] = useState(false);
@@ -27,7 +34,15 @@ export default function Home() {
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [dbCategories, setDbCategories] = useState([]);
   const [priceMode, setPriceMode] = useState("retail");
-  
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
+
   const { addItem, products, productsLoading, setIsSidebarOpen } = useCart();
 
   useEffect(() => {
@@ -41,7 +56,9 @@ export default function Home() {
 
   const filteredProducts = (products || []).filter(p => {
     const matchesSearch = p.title?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategoryId ? p.categoryId === parseInt(activeCategoryId) || p.categoryId === activeCategoryId : true;
+    const matchesCategory = activeCategoryId 
+      ? p.categoryId === activeCategoryId || p.category?.id === activeCategoryId || p.category?.slug === activeCategoryId 
+      : true;
     
     // Filter by priceMode
     let matchesMode = true;
@@ -91,8 +108,8 @@ export default function Home() {
         <button className="icon-btn" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
           <FiMenu />
         </button>
-        <Link href="/" className="header-center" aria-label="Malati Nursury home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="https://pub-ce8688bc6c654bcfb99716f7c9373bcd.r2.dev/Malatinursury/MalatiNurseryLogo.png" alt="Malati Nursury Logo" style={{ height: '40px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+        <Link href="/" className="header-center" aria-label="Hasan Adenium home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src="/logo.png" alt="Hasan Adenium Logo" className="header-logo" style={{ height: '53px', width: 'auto', objectFit: 'contain', background: 'transparent' }} />
         </Link>
         <div className="header-actions">
           <Link href="/admin" className="icon-btn" aria-label="Admin Panel">
@@ -119,18 +136,47 @@ export default function Home() {
 
       {!searchQuery && (
         <>
-          <section className="hero" style={{ ...heroStyle }}>
-            <div className="hero-overlay">
+          <section className="hero" style={{ position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+            {heroImages.map((imgUrl, idx) => (
+              <div
+                key={imgUrl}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url("${imgUrl}")`,
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no-repeat',
+                  opacity: idx === currentHeroIndex ? 1 : 0,
+                  transition: 'opacity 0.8s ease-in-out',
+                  zIndex: 1
+                }}
+              />
+            ))}
+            <div className="hero-overlay" style={{ 
+              position: 'relative', 
+              zIndex: 2, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              alignItems: 'flex-start',
+              height: '100%', 
+              padding: '24px 20px',
+              background: 'linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
+              textAlign: 'left'
+            }}>
               <span className="badge">NEW ARRIVALS</span>
-              <h1 style={{ fontSize: '22px', fontWeight: 'bold', margin: '8px 0', lineHeight: '1.3' }}>Mitali Nursery - Wholesale & Retail Plant Nursery</h1>
-              <p>20 years experience · Over 300+ live nursery plant varieties in Panskura, West Bengal</p>
-              <a href="tel:+917427941760" className="cta-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>Call me</a>
+              <h1 style={{ fontSize: '22px', fontWeight: 'bold', margin: '12px 0 16px 0', lineHeight: '1.3' }}>Hasan Adenium : rooted in quality , blooming with passion since 2004</h1>
+              <a href="tel:+919153117740" className="cta-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>Call me</a>
             </div>
           </section>
 
           <div className="notice">
             <p className="notice-track">
-              Location: West Bengal / Panskura / 721152 &nbsp;&nbsp;|&nbsp;&nbsp; Mobile: +917427941760 , +917978243235
+              CALL Us for bulk order at 9153117740
             </p>
           </div>
 
@@ -152,6 +198,15 @@ export default function Home() {
       )}
 
       <section className="category-row" aria-label="Plant categories">
+        <article 
+          className={`category-modern ${activeCategoryId === null ? 'active' : ''}`}
+          onClick={() => setActiveCategoryId(null)}
+        >
+          <div className="category-icon-modern tone-a">
+            <FaTree />
+          </div>
+          <p>All Plants</p>
+        </article>
         {dbCategories.map((category, index) => (
           <article 
             key={category.id} 
@@ -188,9 +243,14 @@ export default function Home() {
               <article key={product.id || product.slug} className="product-card">
                 <span className="offer-pill">{product.offer}</span>
                 <Link href={`/product/${product.slug}?mode=${priceMode}`} className="product-image-link" style={{ display: 'block', overflow: 'hidden' }}>
-                  <img src={product.image} alt={`Mitali Nursery Plant - ${product.title}`} loading="lazy" decoding="async" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                  <img src={product.image} alt={`Hasan Adenium Plant - ${product.title}`} loading="lazy" decoding="async" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
                 </Link>
                 <div className="product-info">
+                  {product.category?.name && (
+                    <span style={{ fontSize: '11px', color: '#1f6b2c', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {product.category.name}
+                    </span>
+                  )}
                   <p className="product-title">{product.title}</p>
                   <p className="product-rating">☆ ☆ ☆ ☆ ☆ 5.0 | 120 Reviews</p>
                   {priceMode !== "wholesale" && (
@@ -215,22 +275,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="seo-content-section" style={{ padding: '20px 16px', background: '#f4f8f4', margin: '24px 12px 12px 12px', borderRadius: '12px', border: '1px solid #d8e6d8' }}>
-        <h2 style={{ fontSize: '16px', color: '#1f6b2c', marginBottom: '8px', fontWeight: 'bold' }}>Mitali Nursery - Premier Wholesale & Retail Live Plant Supplier</h2>
-        <p style={{ fontSize: '13px', color: '#444', lineHeight: '1.6', marginBottom: '12px' }}>
-          Welcome to <strong>Mitali Nursery</strong> (also known as <em>Malati Nursery</em>), your trusted online plant nursery and wholesale plant supplier based in Panskura, Purba Medinipur, West Bengal (721152). We specialize in high-quality live nursery plants for garden lovers, landscape contractors, and wholesale plant buyers across India.
-        </p>
-        <h3 style={{ fontSize: '14px', color: '#222', marginBottom: '6px', fontWeight: 'bold' }}>Our Wholesale & Retail Plant Offerings:</h3>
-        <ul style={{ fontSize: '12px', color: '#555', paddingLeft: '18px', lineHeight: '1.6', marginBottom: '12px' }}>
-          <li><strong>300+ Live Plant Varieties:</strong> Premium Adenium plants, grafted fruit trees, flowering shrubs, indoor air-purifying plants, and rare bonsai.</li>
-          <li><strong>Direct Wholesale Rates:</strong> Special bulk pricing for reseller nurseries, garden centers, and landscape projects.</li>
-          <li><strong>20+ Years Horticulture Experience:</strong> Healthy, well-rooted nursery plants carefully grown for high survival rate.</li>
-          <li><strong>Pan-India Shipping:</strong> Secure protective live plant packaging for safe delivery across all Indian states.</li>
-        </ul>
-        <p style={{ fontSize: '12px', color: '#444', lineHeight: '1.5' }}>
-          For wholesale bulk enquiries or custom orders, call us directly at <strong>+91 7427941760</strong> or <strong>+91 7978243235</strong>.
-        </p>
-      </section>
+
 
 
       {menuOpen && <button className="menu-overlay" aria-label="Close menu overlay" onClick={() => setMenuOpen(false)} />}
@@ -297,7 +342,7 @@ export default function Home() {
           </span>
           <span>Cart</span>
         </button>
-        <a href="https://wa.me/917427941760" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <a href="https://wa.me/919153117740" className="bottom-item" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
           <span className="bottom-icon" style={{ color: '#25D366' }}>
             <FaWhatsapp />
           </span>

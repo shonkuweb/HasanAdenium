@@ -1,4 +1,4 @@
-mitalinursury.com, www.mitalinursury.com, malatinursury.shonkuweb.com {
+hassanadenium.shonkuweb.com, hasanadenium.shonkuweb.com, hasanadenium.com, www.hasanadenium.com {
     reverse_proxy web:3000
 }
 

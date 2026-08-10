@@ -1,6 +1,7 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { FiKey, FiExternalLink } from 'react-icons/fi';
 import LogoutButton from '../LogoutButton';
 
 export default function AdminHeader() {
@@ -9,64 +10,24 @@ export default function AdminHeader() {
   if (pathname === '/admin/login') return null;
 
   return (
-    <header style={{ 
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: '#fff',
-      padding: '24px 32px', 
-      marginBottom: '32px', 
-      borderRadius: '16px',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-      gap: '16px'
-    }}>
-      <div>
-        <h1 style={{ 
-          margin: 0, 
-          color: '#1f6b2c', 
-          fontSize: '1.8rem', 
-          fontWeight: '800',
-          letterSpacing: '-0.02em'
-        }}>
-          Malati Nursery
+    <header className="admin-header-card">
+      <div className="admin-header-brand">
+        <h1 className="admin-header-title">
+          Hasan Adenium
         </h1>
-        <p style={{ 
-          margin: '4px 0 0 0', 
-          color: '#666',
-          fontSize: '0.95rem',
-          fontWeight: '500'
-        }}>
+        <p className="admin-header-subtitle">
           Admin Dashboard
         </p>
       </div>
       
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <Link href="/admin/change-password" style={{
-          padding: '10px 20px',
-          backgroundColor: '#f5f5f5',
-          color: '#333',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: '600',
-          fontSize: '0.95rem',
-          transition: 'all 0.2s',
-          border: '1px solid #ddd'
-        }}>
-          Change Password
+      <div className="admin-header-actions">
+        <Link href="/admin/change-password" className="admin-header-btn admin-btn-secondary">
+          <FiKey className="btn-icon" />
+          <span>Password</span>
         </Link>
-        <Link href="/" style={{
-          padding: '10px 20px',
-          backgroundColor: '#eaf4ee',
-          color: '#1f6b2c',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: '600',
-          fontSize: '0.95rem',
-          transition: 'all 0.2s',
-          border: '1px solid #cde2d3'
-        }}>
-          View Store
+        <Link href="/" className="admin-header-btn admin-btn-primary">
+          <FiExternalLink className="btn-icon" />
+          <span>View Store</span>
         </Link>
         <LogoutButton />
       </div>

@@ -82,7 +82,7 @@ export function CartProvider({ children }) {
   );
 
   return (
-    <CartContext.Provider value={{ items: detailedItems, addItem, updateQty, removeItem, clear, products, productsLoading, isSidebarOpen, setIsSidebarOpen, isMenuOpen, setIsMenuOpen }}>
+    <CartContext.Provider value={{ items: detailedItems, addItem, updateQty, removeItem, clear, products, productsLoading, isSidebarOpen, setIsSidebarOpen, isMenuOpen, setIsMenuOpen, minOrderQty: 5 }}>
       {children}
     </CartContext.Provider>
   );

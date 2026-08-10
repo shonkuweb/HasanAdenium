@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: malati_app
+    container_name: hasan_adenium_app
     restart: always
     ports:
       - "3005:3000"

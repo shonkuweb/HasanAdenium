@@ -5,7 +5,12 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: {
+        category: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
     return NextResponse.json(products);
   } catch (error) {
     console.error("Failed to fetch products:", error);
@@ -34,6 +39,10 @@ export async function POST(request) {
         rating: data.rating || 5.0,
         reviews: data.reviews || 120,
         adeniumOptions: adeniumOptionsStr,
+        categoryId: data.categoryId || null,
+      },
+      include: {
+        category: true
       }
     });
 
@@ -69,6 +78,10 @@ export async function PUT(request) {
         rating: data.rating || 5.0,
         reviews: data.reviews || 120,
         adeniumOptions: adeniumOptionsStr,
+        categoryId: data.categoryId || null,
+      },
+      include: {
+        category: true
       }
     });
 

@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 
 export default async function sitemap() {
-  const baseUrl = 'https://mitalinursury.com';
+  const baseUrl = 'https://hasanadenium.com';
 
   let productUrls = [];
   try {

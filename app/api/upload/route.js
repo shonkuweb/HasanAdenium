@@ -26,11 +26,11 @@ export async function POST(request) {
     
     const type = formData.get('type') || '';
     
-    let folderName = 'Malatinursury/Both'; // default
+    let folderName = 'HasanAdenium/Both'; // default
     if (type === 'Wholesale only') {
-      folderName = 'Malatinursury/WholeSale';
+      folderName = 'HasanAdenium/WholeSale';
     } else if (type === 'Retail only') {
-      folderName = 'Malatinursury/Retail';
+      folderName = 'HasanAdenium/Retail';
     }
 
     const objectKey = `${folderName}/${Date.now()}_${filename}`;

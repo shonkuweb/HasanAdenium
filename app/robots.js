@@ -7,7 +7,7 @@ export default function robots() {
         disallow: ['/admin', '/api/'],
       },
     ],
-    sitemap: 'https://mitalinursury.com/sitemap.xml',
-    host: 'https://mitalinursury.com',
+    sitemap: 'https://hasanadenium.com/sitemap.xml',
+    host: 'https://hasanadenium.com',
   };
 }
