@@ -6,7 +6,7 @@ services:
     container_name: hasan_adenium_app
     restart: always
     ports:
-      - "3005:3000"
+      - "3015:3000"
     volumes:
       # Mount the data folder so JSON files and SQLite DB persist if the container restarts
       - ./data:/data
