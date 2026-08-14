@@ -46,35 +46,43 @@ export default function CartSidebar() {
             </div>
           ) : (
             <div className="cart-items-list">
-              {cartItems.map((item) => (
-                <article className="cart-item-modern" key={`${item.slug}-${item.variant || 'base'}`}>
-                  <div 
-                    className={`cart-item-img ${item.imageClass || ''}`} 
-                    style={item.image ? { backgroundImage: `url(${item.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-                  />
-                  <div className="cart-item-details">
-                    <div className="cart-item-header">
-                      <p className="cart-item-title">{item.title}</p>
-                      <button type="button" className="cart-item-remove" aria-label="Remove item" onClick={() => removeItem(item.slug, item.variant)}>
-                        <FiTrash2 />
-                      </button>
-                    </div>
-                    {item.variant && <p className="cart-item-variant">Variant: {item.variant}</p>}
-                    <div className="cart-item-bottom">
-                      <strong className="cart-item-price">{item.price}</strong>
-                      <div className="qty-control-modern">
-                        <button type="button" aria-label="Decrease quantity" onClick={() => updateQty(item.slug, item.variant, item.qty - 1)}>
-                          <FiMinus />
-                        </button>
-                        <span>{item.qty}</span>
-                        <button type="button" aria-label="Increase quantity" onClick={() => updateQty(item.slug, item.variant, item.qty + 1)}>
-                          <FiPlus />
+              {cartItems.map((item) => {
+                const itemKey = `${item.slug}-${item.variant || 'base'}-${Array.isArray(item.selectedOptions) ? item.selectedOptions.join('-') : ''}`;
+                return (
+                  <article className="cart-item-modern" key={itemKey}>
+                    <div 
+                      className={`cart-item-img ${item.imageClass || ''}`} 
+                      style={item.image ? { backgroundImage: `url(${item.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+                    />
+                    <div className="cart-item-details">
+                      <div className="cart-item-header">
+                        <p className="cart-item-title">{item.title}</p>
+                        <button type="button" className="cart-item-remove" aria-label="Remove item" onClick={() => removeItem(item.slug, item.variant, item.selectedOptions)}>
+                          <FiTrash2 />
                         </button>
                       </div>
+                      {item.variant && <p className="cart-item-variant">Variant: {item.variant}</p>}
+                      {Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0 && (
+                        <p className="cart-item-variant" style={{ color: '#1f6b2c', fontSize: '11px', fontWeight: '600' }}>
+                          Options: {item.selectedOptions.join(", ")}
+                        </p>
+                      )}
+                      <div className="cart-item-bottom">
+                        <strong className="cart-item-price">{item.price}</strong>
+                        <div className="qty-control-modern">
+                          <button type="button" aria-label="Decrease quantity" onClick={() => updateQty(item.slug, item.variant, item.qty - 1, item.selectedOptions)}>
+                            <FiMinus />
+                          </button>
+                          <span>{item.qty}</span>
+                          <button type="button" aria-label="Increase quantity" onClick={() => updateQty(item.slug, item.variant, item.qty + 1, item.selectedOptions)}>
+                            <FiPlus />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </div>

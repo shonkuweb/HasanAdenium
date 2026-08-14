@@ -38,9 +38,11 @@ export default function CheckoutPage() {
   const hasAdenium = cartItems.some(item => item.title?.toLowerCase().includes('adenium') || item.slug?.toLowerCase().includes('adenium'));
 
   const ADENIUM_CHECKOUT_OPTIONS = [
-    'Addenium Multigrafted 8" Pot 1200',
-    'Addenium Multigrafted 10" Pot 1500',
-    'Addenium Single grafted 150'
+    "2 year old",
+    "4 year old",
+    "6 year old",
+    "8 year old",
+    "grafted on 8 old arabicum rootstock"
   ];
 
   const itemTotal = cartItems.reduce((sum, i) => sum + toAmount(i.price) * i.qty, 0);
@@ -69,8 +71,9 @@ export default function CheckoutPage() {
       alert("Please fill in all delivery details.");
       return;
     }
-    if (hasAdenium && selectedAdeniumOptions.length === 0) {
-      alert("Please select at least one Adenium option.");
+    const hasCartOptions = cartItems.some((i) => Array.isArray(i.selectedOptions) && i.selectedOptions.length > 0);
+    if (hasAdenium && !hasCartOptions && selectedAdeniumOptions.length === 0) {
+      alert("Please select at least one plant option.");
       return;
     }
     const orderId = `BPN-${Date.now().toString().slice(-6)}`;
@@ -101,13 +104,16 @@ export default function CheckoutPage() {
     message += `*Order Items:*\n`;
     cartItems.forEach(item => {
       message += `- ${item.title} (x${item.qty}) - Rs. ${(toAmount(item.price) * item.qty).toFixed(2)}\n`;
+      if (Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0) {
+        message += `  • Options: ${item.selectedOptions.join(', ')}\n`;
+      }
     });
     message += `\n*Item Total:* Rs. ${itemTotal.toFixed(2)}\n`;
     message += `*Delivery Charge:* ${deliveryCharge === 0 ? "FREE" : `Rs. ${deliveryCharge.toFixed(2)}`}\n`;
     message += `*Total Payable:* Rs. ${grandTotal.toFixed(2)}`;
 
-    if (hasAdenium && selectedAdeniumOptions.length > 0) {
-      message += `\n\n*Selected Adenium Options:*\n`;
+    if (selectedAdeniumOptions.length > 0) {
+      message += `\n\n*Additional Selected Options:*\n`;
       selectedAdeniumOptions.forEach(opt => {
         message += `✅ ${opt}\n`;
       });
@@ -194,8 +200,8 @@ export default function CheckoutPage() {
           {cartItems.length === 0 && <p className="empty-small">No products selected.</p>}
           
           <div className="order-lines-modern">
-            {cartItems.map((item) => (
-              <div className="order-line-modern" key={`${item.slug}-${item.variant || 'base'}`}>
+            {cartItems.map((item, idx) => (
+              <div className="order-line-modern" key={`${item.slug}-${item.variant || 'base'}-${idx}`}>
                 <div 
                   className={`cart-item-img ${item.imageClass || ''}`} 
                   style={{ 
@@ -206,7 +212,12 @@ export default function CheckoutPage() {
                 />
                 <div className="order-line-info-modern">
                   <p>{item.title}</p>
-                  <span>Variant: {item.variant || 'Base'} • Qty: {item.qty}</span>
+                  <span>Qty: {item.qty}{item.variant ? ` • Variant: ${item.variant}` : ''}</span>
+                  {Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0 && (
+                    <div style={{ fontSize: '12px', color: '#1f6b2c', marginTop: '2px', fontWeight: '500' }}>
+                      Options: {item.selectedOptions.join(', ')}
+                    </div>
+                  )}
                 </div>
                 <strong className="order-line-total-modern">
                   Rs. {(toAmount(item.price) * item.qty).toFixed(2)}

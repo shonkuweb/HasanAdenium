@@ -18,6 +18,7 @@ import { FaLeaf, FaSeedling, FaTree, FaWhatsapp } from "react-icons/fa";
 import { GiFlowerPot, GiFlowerTwirl } from "react-icons/gi";
 import { categories as defaultCategories } from "./data/categories";
 import { useCart } from "./context/CartContext";
+import ProductOptionsModal from "./components/ProductOptionsModal";
 
 const heroImages = [
   "/hero/hero-1.jpg",
@@ -35,6 +36,7 @@ export default function Home() {
   const [dbCategories, setDbCategories] = useState([]);
   const [priceMode, setPriceMode] = useState("retail");
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [optionsModalProduct, setOptionsModalProduct] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -170,7 +172,6 @@ export default function Home() {
             }}>
               <span className="badge">NEW ARRIVALS</span>
               <h1 style={{ fontSize: '22px', fontWeight: 'bold', margin: '12px 0 16px 0', lineHeight: '1.3' }}>Hasan Adenium : rooted in quality , blooming with passion since 2004</h1>
-              <a href="tel:+919153117740" className="cta-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>Call me</a>
             </div>
           </section>
 
@@ -264,7 +265,7 @@ export default function Home() {
                       View Product
                     </Link>
                   ) : (
-                    <button className="add-btn" onClick={() => addItem(product.slug, 1)}>
+                    <button className="add-btn" onClick={() => setOptionsModalProduct(product)}>
                       Add to Cart
                     </button>
                   )}
@@ -349,6 +350,17 @@ export default function Home() {
           <span>WhatsApp</span>
         </a>
       </nav>
+
+      <ProductOptionsModal
+        isOpen={!!optionsModalProduct}
+        onClose={() => setOptionsModalProduct(null)}
+        product={optionsModalProduct}
+        actionType="cart"
+        onConfirm={(prod, q, opts) => {
+          addItem(prod.slug, q, null, opts);
+          setIsSidebarOpen(true);
+        }}
+      />
     </main>
   );
 }

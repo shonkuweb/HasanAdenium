@@ -44,25 +44,67 @@ export function CartProvider({ children }) {
     localStorage.setItem("blooming-partners-cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = (slug, qty = 1, variant = null) => {
+  const addItem = (slug, qty = 1, variant = null, selectedOptions = []) => {
     setItems((prev) => {
-      const found = prev.find((i) => i.slug === slug && i.variant === variant);
+      const optionsKey = Array.isArray(selectedOptions) ? selectedOptions.slice().sort().join(",") : "";
+      const found = prev.find(
+        (i) =>
+          i.slug === slug &&
+          i.variant === variant &&
+          (Array.isArray(i.selectedOptions) ? i.selectedOptions.slice().sort().join(",") : "") === optionsKey
+      );
       if (found) {
-        return prev.map((i) => (i.slug === slug && i.variant === variant ? { ...i, qty: i.qty + qty } : i));
+        return prev.map((i) =>
+          i.slug === slug &&
+          i.variant === variant &&
+          (Array.isArray(i.selectedOptions) ? i.selectedOptions.slice().sort().join(",") : "") === optionsKey
+            ? { ...i, qty: i.qty + qty }
+            : i
+        );
       }
-      return [...prev, { slug, qty, variant }];
+      return [...prev, { slug, qty, variant, selectedOptions }];
     });
   };
 
-  const updateQty = (slug, variant, qty) => {
+  const updateQty = (slug, variant, qty, selectedOptions = []) => {
+    const optionsKey = Array.isArray(selectedOptions) ? selectedOptions.slice().sort().join(",") : "";
     if (qty <= 0) {
-      setItems((prev) => prev.filter((i) => !(i.slug === slug && i.variant === variant)));
+      setItems((prev) =>
+        prev.filter(
+          (i) =>
+            !(
+              i.slug === slug &&
+              i.variant === variant &&
+              (Array.isArray(i.selectedOptions) ? i.selectedOptions.slice().sort().join(",") : "") === optionsKey
+            )
+        )
+      );
       return;
     }
-    setItems((prev) => prev.map((i) => (i.slug === slug && i.variant === variant ? { ...i, qty } : i)));
+    setItems((prev) =>
+      prev.map((i) =>
+        i.slug === slug &&
+        i.variant === variant &&
+        (Array.isArray(i.selectedOptions) ? i.selectedOptions.slice().sort().join(",") : "") === optionsKey
+          ? { ...i, qty }
+          : i
+      )
+    );
   };
 
-  const removeItem = (slug, variant) => setItems((prev) => prev.filter((i) => !(i.slug === slug && i.variant === variant)));
+  const removeItem = (slug, variant, selectedOptions = []) => {
+    const optionsKey = Array.isArray(selectedOptions) ? selectedOptions.slice().sort().join(",") : "";
+    setItems((prev) =>
+      prev.filter(
+        (i) =>
+          !(
+            i.slug === slug &&
+            i.variant === variant &&
+            (Array.isArray(i.selectedOptions) ? i.selectedOptions.slice().sort().join(",") : "") === optionsKey
+          )
+      )
+    );
+  };
   const clear = () => setItems([]);
 
   const detailedItems = useMemo(
@@ -75,7 +117,7 @@ export function CartProvider({ children }) {
           if (item.variant && product.adeniumOptions && product.adeniumOptions[item.variant]) {
             price = product.adeniumOptions[item.variant];
           }
-          return { ...product, qty: item.qty, variant: item.variant, price };
+          return { ...product, qty: item.qty, variant: item.variant, selectedOptions: item.selectedOptions || [], price };
         })
         .filter(Boolean),
     [items, products]
@@ -95,3 +137,4 @@ export function useCart() {
   }
   return ctx;
 }
+

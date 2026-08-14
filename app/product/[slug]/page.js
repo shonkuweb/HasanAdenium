@@ -24,6 +24,7 @@ import {
 import { FaWhatsapp, FaLeaf } from "react-icons/fa";
 import { categories as menuCategories } from "../../data/categories";
 import { useCart } from "../../context/CartContext";
+import ProductOptionsModal from "../../components/ProductOptionsModal";
 
 
 
@@ -39,6 +40,7 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
   const mode = searchParams?.get('mode');
   const isWholesale = mode === 'wholesale';
+  const [optionsModal, setOptionsModal] = useState({ isOpen: false, actionType: "cart" });
 
   const { addItem, products, productsLoading, setIsSidebarOpen } = useCart();
   const product = products.find((item) => item.slug === slug);
@@ -72,32 +74,12 @@ export default function ProductPage() {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    if (availableVariants.length > 0) {
-      const selected = Object.entries(variantQtys).filter(([v, q]) => q > 0);
-      if (selected.length === 0) {
-        alert("Please select at least one option.");
-        return;
-      }
-      selected.forEach(([v, q]) => addItem(product.slug, q, v));
-    } else {
-      addItem(product.slug, qty);
-    }
-    router.push('/cart');
+    setOptionsModal({ isOpen: true, actionType: "cart" });
   };
 
   const handleBuyNow = (e) => {
     e.preventDefault();
-    if (availableVariants.length > 0) {
-      const selected = Object.entries(variantQtys).filter(([v, q]) => q > 0);
-      if (selected.length === 0) {
-        alert("Please select at least one option.");
-        return;
-      }
-      selected.forEach(([v, q]) => addItem(product.slug, q, v));
-    } else {
-      addItem(product.slug, qty);
-    }
-    router.push('/checkout');
+    setOptionsModal({ isOpen: true, actionType: "buyNow" });
   };
 
   return (
@@ -360,6 +342,21 @@ export default function ProductPage() {
           </>
         )}
       </nav>
+
+      <ProductOptionsModal
+        isOpen={optionsModal.isOpen}
+        onClose={() => setOptionsModal({ isOpen: false, actionType: "cart" })}
+        product={product}
+        actionType={optionsModal.actionType}
+        onConfirm={(prod, modalQty, selectedOpts) => {
+          addItem(prod.slug, modalQty, null, selectedOpts);
+          if (optionsModal.actionType === "buyNow") {
+            router.push('/checkout');
+          } else {
+            setIsSidebarOpen(true);
+          }
+        }}
+      />
     </main>
   );
 }
